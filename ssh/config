@@ -3,3 +3,4 @@ Host crisidev_irssi
   Port 443
   Hostname crisidev.org
   RemoteForward 4223 localhost:4223
+  ControlMaster no
