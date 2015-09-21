@@ -1,0 +1,34 @@
+#!/bin/bash
+echo -ne "\033];crisidev_irssi\007"
+
+# Host
+IRSSI_HOST="crisidev_irssi"
+
+# Autossh stuff
+AUTOSSH_POLL=20
+AUTOSSH_PORT=$(awk 'BEGIN { srand(); do r = rand()*32000; while ( r < 20000 ); printf("%d\n",r)  }' < /dev/null)
+AUTOSSH_GATETIME=60
+#AUTOSSH_LOGFILE=$HOST.log
+#AUTOSSH_DEBUG=yes
+#AUTOSSH_PATH=/usr/local/bin/ssh
+export AUTOSSH_POLL AUTOSSH_LOGFILE AUTOSSH_DEBUG AUTOSSH_PATH AUTOSSH_GATETIME AUTOSSH_PORT
+
+# Rino stuff
+LINK="crisidev:4223"
+RINO_PID="${HOME}/.rino/${LINK}.pid"
+RINO_LOG="${HOME}/.rino/${LINK}.log"
+
+# Cleanup
+trap cleanup EXIT
+function cleanup() {
+  ssh ${IRSSI_HOST} -t "rm ~/.irssi/rino/${LINK}"
+}
+
+# Start rino
+nohup rino -l ${LINK} >> ${RINO_LOG} &
+
+# Start autossh and irssi
+ssh ${IRSSI_HOST} -t "touch ~/.irssi/rino/${LINK}"
+autossh -t ${IRSSI_HOST} "tmux -L default attach-session -t irssi ||tmux new-session -s irssi irssi"
+
+exit 0
