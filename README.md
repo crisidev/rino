@@ -26,6 +26,15 @@ the link into /$HOME/.irssi/rino inside your remote IRSSI box.
 If your IRSSI is on localhost, you just have to avoid the port
 forwarding.
 
+With rino running as
+```shell
+rino -l crisidev:4223
+```
+a message from <b>paul</b> with content <b>hello matteo</b> will become
+a notification with
+* <b>title:</b> crisidev: paul
+* <b>message:</b> hello matteo
+
 ## Installation and usage
 ### Standalone
 #### Prerequisites
@@ -42,6 +51,11 @@ forwarding.
 $ go get github.com/crisidev/rino
 $ go install github.com/crisidev/rino
 ```
+or if you are lazy and don't want to compile rino
+```shell
+$ wget http://repo.crisidev.org/rino
+```
+
 * On your IRSSI box
 ```shell
 $ git clone github.com/crisidev/rino
