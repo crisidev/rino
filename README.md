@@ -75,3 +75,7 @@ There are also utility scripts inside folders bin and ssh to allow
 integration with autossh, tmux and ssh_config.
 Take a look to folders bin and ssh and adapt the scripts to your
 necessities.
+
+# TODO
+* Unittests
+* Support libnotify on linux
