@@ -50,8 +50,10 @@ $ (from IRSSI) /script load autorun/rino.pl
 ```
 
 #### Use it
-ssh -R 4223:localhost:4223 $USER@irssibox
-nohup rino -l irssi:4223 >> /$HOME/.rino/irssi:4223.log &
+```shell
+$ nohup rino -l irssi:4223 >> /$HOME/.rino/irssi:4223.log &
+$ ssh -R 4223:localhost:4223 $USER@irssibox
+```
 
 ### Complete
 #### Prerequisites
