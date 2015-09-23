@@ -21,6 +21,8 @@ $VERSION = "1.0";
     url         => 'http://github.com/crisidev/rino',
 );
 
+my $dbg = 0;
+
 my $rinodir = Irssi::get_irssi_dir() . "/rino";
 mkdir $rinodir unless -d $rinodir;
 
@@ -37,7 +39,9 @@ sub notify {
               PeerAddr => $host,
               PeerPort => $port
             ) or do {
-              Irssi::print("unable to send to " . $host . ":" . $port . " " . $!);
+              if ($dbg == 1) {
+                Irssi::print("unable to send to " . $host . ":" . $port . " " . $!);
+              }
             };
     print $sock $nick . $separator . $message . "\n" if defined $sock;
   }
