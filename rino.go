@@ -194,7 +194,7 @@ func AnalyseMessage(buff, tag string) (title, message, url string, err error) {
 	} else {
 		title = fmt.Sprintf("\"%s: %s\"", tag, strings.Trim(split[0], " "))
 		message = fmt.Sprintf("\"%s\"", strings.Trim(split[1], "\n"))
-		url = fmt.Sprintf("\"%s\"", xurls.Relaxed.FindString(message))
+		url = fmt.Sprintf("\"%s\"", xurls.Strict.FindString(message))
 		lg.Out(fmt.Sprintf("title:\t%s", title))
 		lg.Out(fmt.Sprintf("message:\t%s", message))
 		lg.Out(fmt.Sprintf("url:\t%s", url))
