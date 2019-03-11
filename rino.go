@@ -35,7 +35,7 @@ var (
 	flagLink           = kingpin.Flag("link", "link rino with a SSH exposed port using a tag like \"BIGO:4223\"").Short('l').String()
 	flagStop           = kingpin.Flag("stop", "send signal 1 to rino using the current link").Short('s').Bool()
 	flagServiceDir     = kingpin.Flag("service-dir", "path for service dir for lock and pid files").Short('d').Default(fmt.Sprintf("%s/.rino", os.Getenv("HOME"))).String()
-	flagNotifierCmd    = kingpin.Flag("notifier-cmd", "path for terminal-notifier command").Default("/usr/local/bin/terminal-notifier").Short('N').String()
+	flagNotifierCmd    = kingpin.Flag("notifier-cmd", "path for terminal-notifier command").Default("/usr/bin/notify-send").Short('N').String()
 	flagNotifierSender = kingpin.Flag("notifier-sender", "sender for terminal-notifier command, aka the icon").Default("com.apple.Terminal").Short('S').String()
 )
 
@@ -181,7 +181,7 @@ func HandleRequest(conn net.Conn, tag string) {
 	}
 	if message != "" {
 		lg.Out("new message read")
-		OsxNotify(message, tag)
+		UbuntuNotify(message, tag)
 	}
 }
 
@@ -192,9 +192,9 @@ func AnalyseMessage(buff, tag string) (title, message, url string, err error) {
 	if len(split) != 2 {
 		err = errors.New(fmt.Sprintf("unable to analyze message %s", buff))
 	} else {
-		title = fmt.Sprintf("\"%s: %s\"", tag, strings.Trim(split[0], " "))
-		message = fmt.Sprintf("\"%s\"", strings.Trim(split[1], "\n"))
-		url = fmt.Sprintf("\"%s\"", xurls.Strict.FindString(message))
+		title = fmt.Sprintf("%s: %s", tag, strings.Trim(split[0], " "))
+		message = fmt.Sprintf("%s", strings.Trim(split[1], "\n"))
+		url = fmt.Sprintf("%s", xurls.Strict().FindString(message))
 		lg.Out(fmt.Sprintf("title:\t%s", title))
 		lg.Out(fmt.Sprintf("message:\t%s", message))
 		lg.Out(fmt.Sprintf("url:\t%s", url))
@@ -202,16 +202,13 @@ func AnalyseMessage(buff, tag string) (title, message, url string, err error) {
 	return title, message, url, err
 }
 
-func OsxNotify(buff, tag string) {
+func UbuntuNotify(buff, tag string) {
 	lg.Out("notifiying OSX")
-	title, message, url, err := AnalyseMessage(buff, tag)
+	title, message, _, err := AnalyseMessage(buff, tag)
 	if err != nil {
 		lg.Error(err)
 	} else {
-		args := []string{"-sender", *flagNotifierSender, "-title", title, "-message", message}
-		if url != "\"\"" {
-			args = append(args, []string{"-open", url}...)
-		}
+		args := []string{title, message}
 		cmd := exec.Command(*flagNotifierCmd, args...)
 		lg.Out(fmt.Sprintf("running %s", strings.Join(cmd.Args, " ")))
 		err = cmd.Run()
